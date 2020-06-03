@@ -1,0 +1,23 @@
+{
+  "name": "api_fb_messenger",
+  "version": "1.0.0",
+  "description": "Aplicacion con SENDApi de Facebook",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "Carlos",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.6",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.8",
+    "mongoose": "^5.9.16",
+    "ngrok": "^3.2.7",
+    "nodemon": "^2.0.4",
+    "request": "^2.88.2"
+  }
+}
