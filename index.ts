@@ -4,7 +4,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const ngrok = require('ngrok');
-const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 8080;
 const PAGE_ACCESS_TOKEN = process.env.FACEBOOK_PAGE_ACCESS_TOKEN;

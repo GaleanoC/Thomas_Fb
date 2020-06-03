@@ -40,7 +40,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var ngrok = require('ngrok');
-var mongoose = require('mongoose');
 var app = express();
 var port = process.env.PORT || 8080;
 var PAGE_ACCESS_TOKEN = process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
