@@ -47,6 +47,7 @@ var database = 'test';
 var db;
 var MongoClient = require('mongodb').MongoClient;
 var uri = process.env.URI_MONGODB_ATLAS;
+var regex = /[Vv0-9-.,]{6,11}/;
 app.listen(port, function () {
     console.log('Corriendo en el puerto ' + port);
 });
@@ -104,15 +105,21 @@ app.post('/webhook', function (req, res) {
             // Verificando si el evento es un mensaje 
             //Si no el evento es un postback
             if (message_user) {
-                console.log(entry);
-                console.log(webhook_event);
-                console.log(message_user);
             }
             else if (webhook_event.postback) {
                 //
             }
             // Subiendo mensaje a la base de datos
             uploadMessage(entry);
+            var nationalID;
+            if (regex.test(message_user.text)) {
+                nationalID = regex.exec(message_user.text)[0];
+                cleanId(nationalID);
+                console.log('CI proporcionada por el usuario', nationalID);
+            }
+            else {
+                console.log('El dato buscado no parece coincidir con con un posible ID VE');
+            }
         });
         // Retorna un status '200 OK' 
         res.status(200).send('EVENT_RECEIVED');
@@ -195,4 +202,49 @@ function uploadMessage(data) {
         console.log(e);
         // mySalida.emit('Error');
     }
+}
+function cleanId(id) {
+    var idve = id;
+    var clean = /[-.,]/g; // elimina todos los puntos, comas y guiones que acompañan al ID
+    var idclean = idve.replace(clean, '');
+    // Despues de retirarle los pontos, comoas o guiones
+    // Pasa a la validacion de ese numero de ID 
+    console.log(validateIdentidad(idclean));
+}
+function validateIdentidad(idVE) {
+    var validFormat, validLength, validVigencia;
+    validLength = function validLength(idVE) {
+        return idVE.length >= 6 && idVE.length <= 8;
+        // Esta condicion indica si la cedula tiene entre 6 y 8 digitos necesarios
+        // Sin inlcuir puntos, guiones o comas 
+    };
+    validFormat = function validFormat(idVE) {
+        return /[Vv0-9]{6,8}/.test(idVE);
+        // Evalua el formato de la cedula  si son unicamente digitos
+        // Sin inlcuir puntos, guiones o comas
+    };
+    validVigencia = function (idVE) {
+        var idNumber = parseInt(idVE);
+        // Busca de manera arbitraria la vigencia de cierto numero de cedulas
+        // Con cierto rango
+        if (idNumber > 800000 && idNumber < 32000000) {
+            console.log('Este CI es mayor a 800000 y menor a 32.000.000 es posible que tenga vigencia');
+            return true;
+        }
+        else if (idNumber > 32000000) {
+            console.log('Es poco probable que exista una actualmente un CI mayor a 32.000.000');
+            return false;
+        }
+        else {
+            console.log('Es posible que si exista este numero de CI, pero ya no debe tener vigencia actualmente');
+            return false;
+        }
+    };
+    if (validLength(idVE) && validFormat(idVE) && validVigencia(idVE)) {
+        console.log('Si validLength, validFormat y validVigencia son true, es muy porbable que sea un CI VE vigente');
+    }
+    else {
+        console.log('No cumple con las condiones para ser una cedula venezolana vigente');
+    }
+    return validLength(idVE) && validFormat(idVE) && validVigencia(idVE);
 }

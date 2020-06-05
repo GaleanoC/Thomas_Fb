@@ -19,5 +19,8 @@
     "ngrok": "^3.2.7",
     "nodemon": "^2.0.4",
     "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "typescript-tslint-plugin": "^0.5.5"
   }
 }
